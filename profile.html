@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - ManoMitra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  <style>
+    /* Profile section styles */
+    .profile-image {
+      transition: all 0.3s ease;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .profile-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Stat card styles */
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Tab styles */
+    .tab-button {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .tab-button::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #10b981;
+      transition: all 0.3s ease;
+    }
+    
+    .tab-button.active {
+      color: #065f46;
+    }
+    
+    .tab-button.active::after {
+      width: 100%;
+    }
+    
+    /* Progress bar styles */
+    .progress-container {
+      height: 8px;
+      width: 100%;
+      background-color: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease-in-out;
+    }
+    
+    /* Chatbot icon styles */
+    .chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .chatbot-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .chatbot-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 350px;
+      height: 450px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      overflow: hidden;
+      display: none;
+      transition: all 0.3s ease;
+    }
+    
+    .chatbot-container.active {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body class="bg-green-50 min-h-screen">
+  <!-- Navigation Bar -->
+  <nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <img src="manomitra.jpeg" alt="ManoMitra Logo" class="h-10 rounded-lg">
+          <span class="ml-2 text-xl font-bold text-emerald-800">ManoMitra</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="dashboard.html" class="text-emerald-600 font-medium hover:text-emerald-800">Home</a>
+          <a href="games.html" class="text-emerald-600 font-medium hover:text-emerald-800">Games</a>
+          <a href="profile.html" class="text-emerald-800 font-medium hover:text-emerald-600">Profile</a>
+          <button onclick="logout()" class="bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1 rounded-lg text-sm font-medium">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Profile Header Section -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+      <div class="flex flex-col md:flex-row items-center">
+        <!-- Profile Image -->
+        <div class="w-24 h-24 md:w-32 md:h-32 rounded-full bg-emerald-100 flex items-center justify-center text-3xl md:text-4xl font-bold text-emerald-800 mb-4 md:mb-0 md:mr-6 profile-image" id="profile-avatar">
+          <!-- First letter of username will be displayed here -->
+        </div>
+        
+        <!-- User Info -->
+        <div class="flex-1 text-center md:text-left">
+          <h1 class="text-2xl font-bold text-emerald-800 mb-1" id="profile-name">User Name</h1>
+          <p class="text-emerald-600 mb-4">Member since <span id="profile-date">April 2025</span></p>
+          
+          <!-- Stats Summary -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+            <div class="stat-card bg-green-50 p-3 rounded-xl text-center">
+              <div class="text-sm text-emerald-700">Games Played</div>
+              <div class="text-xl md:text-2xl font-bold text-emerald-800" id="stats-games">42</div>
+            </div>
+            
+            <div class="stat-card bg-green-50 p-3 rounded-xl text-center">
+              <div class="text-sm text-emerald-700">Best Reaction</div>
+              <div class="text-xl md:text-2xl font-bold text-emerald-800" id="stats-reaction">230ms</div>
+            </div>
+            
+            <div class="stat-card bg-green-50 p-3 rounded-xl text-center">
+              <div class="text-sm text-emerald-700">Memory Score</div>
+              <div class="text-xl md:text-2xl font-bold text-emerald-800" id="stats-memory">85%</div>
+            </div>
+            
+            <div class="stat-card bg-green-50 p-3 rounded-xl text-center">
+              <div class="text-sm text-emerald-700">Daily Streak</div>
+              <div class="text-xl md:text-2xl font-bold text-emerald-800" id="stats-streak">7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tabs Navigation -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button id="tab-stats" class="tab-button active py-2 px-4 text-emerald-800 font-medium" onclick="changeTab('stats')">
+        Performance
+      </button>
+      <button id="tab-history" class="tab-button py-2 px-4 text-emerald-600 font-medium" onclick="changeTab('history')">
+        Activity History
+      </button>
+      <button id="tab-settings" class="tab-button py-2 px-4 text-emerald-600 font-medium" onclick="changeTab('settings')">
+        Account Settings
+      </button>
+    </div>
+    
+    <!-- Performance Stats Tab -->
+    <div id="content-stats" class="tab-content">
+      <!-- Performance Overview Chart -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Performance Overview</h2>
+        <div class="h-64">
+          <canvas id="performanceChart" class="w-full"></canvas>
+        </div>
+      </div>
+      
+      <!-- Cognitive Skills Assessment -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Cognitive Skills Assessment</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-medium text-gray-700 mb-3">Memory</h3>
+            <div class="progress-container mb-1">
+              <div class="progress-bar bg-emerald-500" id="skill-memory" style="width: 75%"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Beginner</span>
+              <span>Advanced</span>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="font-medium text-gray-700 mb-3">Focus & Attention</h3>
+            <div class="progress-container mb-1">
+              <div class="progress-bar bg-emerald-500" id="skill-focus" style="width: 60%"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Beginner</span>
+              <span>Advanced</span>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="font-medium text-gray-700 mb-3">Problem Solving</h3>
+            <div class="progress-container mb-1">
+              <div class="progress-bar bg-emerald-500" id="skill-problem" style="width: 45%"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Beginner</span>
+              <span>Advanced</span>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="font-medium text-gray-700 mb-3">Reaction Speed</h3>
+            <div class="progress-container mb-1">
+              <div class="progress-bar bg-emerald-500" id="skill-reaction" style="width: 85%"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Beginner</span>
+              <span>Advanced</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recommendations -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Personalized Recommendations</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-emerald-200 rounded-lg p-4">
+            <h3 class="font-medium text-emerald-700 mb-2">Focus on Pattern Recognition</h3>
+            <p class="text-gray-600 text-sm">Based on your performance, more pattern recognition exercises could help strengthen your problem-solving skills.</p>
+          </div>
+          
+          <div class="border border-emerald-200 rounded-lg p-4">
+            <h3 class="font-medium text-emerald-700 mb-2">Try More Sequencing Games</h3>
+            <p class="text-gray-600 text-sm">Your sequential memory could use some practice to improve overall cognitive function.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Activity History Tab -->
+    <div id="content-history" class="tab-content hidden">
+      <!-- Recent Activity -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Recent Activity</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="text-left py-2 px-4 text-emerald-700 font-medium">Game</th>
+                <th class="text-left py-2 px-4 text-emerald-700 font-medium">Date</th>
+                <th class="text-left py-2 px-4 text-emerald-700 font-medium">Score</th>
+                <th class="text-left py-2 px-4 text-emerald-700 font-medium">Progress</th>
+              </tr>
+            </thead>
+            <tbody id="activity-table">
+              <!-- Activity data will be populated here -->
+              <tr class="border-t border-gray-200">
+                <td class="py-3 px-4">Memory Match</td>
+                <td class="py-3 px-4">Apr 26, 2025</td>
+                <td class="py-3 px-4">85/100</td>
+                <td class="py-3 px-4 text-emerald-600">+3%</td>
+              </tr>
+              <tr class="border-t border-gray-200">
+                <td class="py-3 px-4">Word Association</td>
+                <td class="py-3 px-4">Apr 26, 2025</td>
+                <td class="py-3 px-4">92/100</td>
+                <td class="py-3 px-4 text-emerald-600">+5%</td>
+              </tr>
+              <tr class="border-t border-gray-200">
+                <td class="py-3 px-4">Reaction Time</td>
+                <td class="py-3 px-4">Apr 25, 2025</td>
+                <td class="py-3 px-4">245ms</td>
+                <td class="py-3 px-4 text-emerald-600">+2%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Monthly Progress Chart -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Monthly Progress</h2>
+        <div class="h-64">
+          <canvas id="monthlyChart" class="w-full"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Account Settings Tab -->
+    <div id="content-settings" class="tab-content hidden">
+      <!-- Personal Information -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Personal Information</h2>
+        
+        <div class="max-w-md mx-auto md:mx-0">
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+              Username
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-emerald-500" id="edit-username" type="text" value="User Name">
+          </div>
+          
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+              Email (optional)
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-emerald-500" id="edit-email" type="email" placeholder="your.email@example.com">
+          </div>
+          
+          <div class="mt-6">
+            <button class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150" type="button" onclick="updateProfile()">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Update Emotional Anchors -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-bold text-emerald-800 mb-4">Update Emotional Anchors</h2>
+        <p class="text-gray-600 mb-4">You can update your emotional anchor images for login.</p>
+        
+        <button onclick="updateAnchors()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-medium py-2 px-4 rounded-lg transition duration-150">
+          Update Anchors
+        </button>
+      </div>
+      
+      <!-- Account Actions -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-bold text-red-800 mb-4">Account Actions</h2>
+        
+        <div class="flex flex-wrap gap-4">
+          <button onclick="exportData()" class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium py-2 px-4 rounded-lg transition duration-150">
+            Export My Data
+          </button>
+          
+          <button onclick="clearData()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-2 px-4 rounded-lg transition duration-150">
+            Clear Activity Data
+          </button>
+          
+          <button onclick="confirmDeleteAccount()" class="bg-red-100 hover:bg-red-200 text-red-800 font-medium py-2 px-4 rounded-lg transition duration-150">
+            Delete Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Icon -->
+  <div class="chatbot-icon" id="chatbot-toggle">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+    </svg>
+  </div>
+
+  <!-- Chatbot Container -->
+  <div class="chatbot-container" id="chatbot-container">
+    <iframe src="chatbot.html" width="100%" height="100%" frameborder="0"></iframe>
+  </div>
+
+  <script>
+    let currentUser = null;
+    
+    // Load user data from localStorage
+    window.addEventListener('DOMContentLoaded', function() {
+      // Get username from URL query param or sessionStorage
+      const urlParams = new URLSearchParams(window.location.search);
+      const usernameFromUrl = urlParams.get('username');
+      const usernameFromSession = sessionStorage.getItem('manomitraCurrentUser');
+      const username = usernameFromUrl || usernameFromSession || 'User';
+      
+      // Find user in storage
+      const allUsers = JSON.parse(localStorage.getItem('manomitraUsers')) || [];
+      currentUser = allUsers.find(user => user.username === username) || { username: username };
+      
+      // Display user info
+      document.getElementById('profile-name').textContent = currentUser.username;
+      document.getElementById('profile-avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+      document.getElementById('edit-username').value = currentUser.username;
+      
+      if (currentUser.email) {
+        document.getElementById('edit-email').value = currentUser.email;
+      }
+      
+      // Load and display game data
+      loadGameData();
+      
+      // Initialize charts
+      initializeCharts();
+    });
+    
+    // Load game data
+    function loadGameData() {
+      // Get game data from localStorage
+      const gameData = JSON.parse(localStorage.getItem('manomitraGameData')) || [];
+      
+      if (!currentUser) return;
+      
+      // Filter data for current user
+      const userData = gameData.filter(item => item.userId === currentUser.username);
+      
+      // Sort by date (newest first)
+      userData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      // Calculate stats
+      let totalGames = userData.length;
+      let bestReaction = Infinity;
+      let averageMemory = 0;
+      let memoryGamesCount = 0;
+      let streak = 0;
+      
+      // Process game data for activity table
+      const activityTable = document.getElementById('activity-table');
+      activityTable.innerHTML = '';
+      
+      if (userData.length === 0) {
+        const row = document.createElement('tr');
+        row.className = 'border-t border-gray-200';
+        
+        const cell = document.createElement('td');
+        cell.className = 'py-3 px-4 text-gray-500';
+        cell.colSpan = 4;
+        cell.textContent = 'No activity data available yet. Play some games to see your history.';
+        
+        row.appendChild(cell);
+        activityTable.appendChild(row);
+      } else {
+        // Take the 10 most recent games
+        userData.slice(0, 10).forEach(game => {
+          // Update stats
+          if (game.gameId === 'reaction-time' && game.score < bestReaction) {
+            bestReaction = game.score;
+          }
+          
+          if (game.gameId === 'memory-match') {
+            averageMemory += parseInt(game.score);
+            memoryGamesCount++;
+          }
+          
+          // Get game display name
+          const gameNames = {
+            'memory-match': 'Memory Match',
+            'sequence-recall': 'Sequence Recall',
+            'reaction-time': 'Reaction Time',
+            'math-game': 'Math Game',
+            'word-association': 'Word Association',
+            'pattern-recognition': 'Pattern Recognition',
+            'breathing-exercise': 'Mindfulness Breathing',
+            'find-difference': 'Find the Difference'
+          };
+          
+          // Create table row
+          const row = document.createElement('tr');
+          row.className = 'border-t border-gray-200';
+          
+          // Game name cell
+          const gameCell = document.createElement('td');
+          gameCell.className = 'py-3 px-4';
+          gameCell.textContent = gameNames[game.gameId] || game.gameId;
+          
+          // Date cell
+          const dateCell = document.createElement('td');
+          dateCell.className = 'py-3 px-4';
+          dateCell.textContent = new Date(game.timestamp).toLocaleDateString();
+          
+          // Score cell
+          const scoreCell = document.createElement('td');
+          scoreCell.className = 'py-3 px-4';
+          
+          // Format score based on game type
+          if (game.gameId === 'reaction-time') {
+            scoreCell.textContent = `${game.score}ms`;
+          } else {
+            scoreCell.textContent = game.score;
+          }
+          
+          // Progress cell (placeholder)
+          const progressCell = document.createElement('td');
+          progressCell.className = 'py-3 px-4 text-emerald-600';
+          progressCell.textContent = '+3%';
+          
+          row.appendChild(gameCell);
+          row.appendChild(dateCell);
+          row.appendChild(scoreCell);
+          row.appendChild(progressCell);
+          
+          activityTable.appendChild(row);
+        });
+      }
+      
+      // Calculate streak (placeholder logic)
+      streak = 7; // In a real app, calculate this from activity dates
+      
+      // Update summary stats displays
+      document.getElementById('stats-games').textContent = totalGames;
+      document.getElementById('stats-reaction').textContent = bestReaction === Infinity ? '--' : `${bestReaction}ms`;
+      document.getElementById('stats-streak').textContent = streak;
+      
+      if (memoryGamesCount > 0) {
+        const memoryAvg = Math.round(averageMemory / memoryGamesCount);
+        document.getElementById('stats-memory').textContent = `${memoryAvg}%`;
+      } else {
+        document.getElementById('stats-memory').textContent = '--';
+      }
+      
+      // Update skill progress bars based on game data
+      updateSkillBars(userData);
+    }
+    
+    // Update skill progress bars
+    function updateSkillBars(userData) {
+      // Define which games affect which skills
+      const gameSkillMap = {
+        'memory-match': ['memory', 'focus'],
+        'sequence-recall': ['memory', 'focus'],
+        'reaction-time': ['reaction'],
+        'math-game': ['problem', 'focus'],
+        'word-association': ['memory', 'problem'],
+        'pattern-recognition': ['problem', 'focus'],
+        'breathing-exercise': ['focus'],
+        'find-difference': ['focus', 'problem']
+      };
+      
+      // Initialize skill counts and totals
+      const skills = {
+        memory: { count: 0, total: 0 },
+        focus: { count: 0, total: 0 },
+        problem: { count: 0, total: 0 },
+        reaction: { count: 0, total: 0 }
+      };
+      
+      // Process game data
+      userData.forEach(game => {
+        // Get relevant skills for this game
+        const gameSkills = gameSkillMap[game.gameId] || [];
+        
+        // Normalize score to 0-1 range
+        let normalizedScore;
+        if (game.gameId === 'reaction-time') {
+          // For reaction time, lower is better (assuming 200ms is great, 600ms is poor)
+          normalizedScore = Math.max(0, Math.min(1, (600 - game.score) / 400));
+        } else {
+          // For other games, higher is better (assuming 0-100 scale)
+          normalizedScore = Math.min(1, game.score / 100);
+        }
+        
+        // Add to skill totals
+        gameSkills.forEach(skill => {
+          if (skills[skill]) {
+            skills[skill].count++;
+            skills[skill].total += normalizedScore;
+          }
+        });
+      });
+      
+      // Calculate percentages and update progress bars
+      Object.keys(skills).forEach(skill => {
+        const skillData = skills[skill];
+        
+        // Calculate percentage (default 20% if no data)
+        let percentage = 20; // Baseline
+        
+        if (skillData.count > 0) {
+          // Calculate average and scale to percentage
+          percentage = Math.round((skillData.total / skillData.count) * 100);
+        }
+        
+        // Update progress bar
+        const progressBar = document.getElementById(`skill-${skill}`);
+        if (progressBar) {
+          progressBar.style.width = `${percentage}%`;
+        }
+      });
+    }
+    
+    // Initialize charts using Chart.js
+    function initializeCharts() {
+      // Performance Overview (Radar Chart)
+      const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+      
+      const performanceChart = new Chart(performanceCtx, {
+        type: 'radar',
+        data: {
+          labels: ['Memory', 'Focus', 'Problem Solving', 'Reaction Speed', 'Attention', 'Mindfulness'],
+          datasets: [{
+            label: 'Your Skills',
+            data: [75, 60, 45, 85, 70, 50],
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            borderColor: 'rgb(16, 185, 129)',
+            pointBackgroundColor: 'rgb(16, 185, 129)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(16, 185, 129)'
+          }]
+        },
+        options: {
+          scales: {
+            r: {
+              angleLines: {
+                display: true
+              },
+              suggestedMin: 0,
+              suggestedMax: 100
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          maintainAspectRatio: false
+        }
+      });
+      
+      // Monthly Progress (Line Chart)
+      const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+      
+      const monthlyChart = new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+          labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+          datasets: [{
+            label: 'Games Played',
+            data: [5, 12, 8, 17],
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            borderColor: 'rgb(16, 185, 129)',
+            tension: 0.3
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          maintainAspectRatio: false
+        }
+      });
+    }
+    
+    // Tab switching functionality
+    function changeTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      
+      // Show selected tab content
+      document.getElementById(`content-${tabId}`).classList.remove('hidden');
+      
+      // Update tab buttons
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+        button.classList.remove('text-emerald-800');
+        button.classList.add('text-emerald-600');
+      });
+      
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('text-emerald-800');
+      document.getElementById(`tab-${tabId}`).classList.remove('text-emerald-600');
+    }
+    
+    // Update profile information
+    function updateProfile() {
+      const newUsername = document.getElementById('edit-username').value.trim();
+      const newEmail = document.getElementById('edit-email').value.trim();
+      
+      if (!newUsername) {
+        alert('Username cannot be empty');
+        return;
+      }
+      
+      // Check if username already exists (if it's being changed)
+      if (newUsername !== currentUser.username) {
+        const allUsers = JSON.parse(localStorage.getItem('manomitraUsers')) || [];
+        const existingUser = allUsers.find(user => user.username === newUsername);
+        
+        if (existingUser) {
+          alert('This username is already taken');
+          return;
+        }
+      }
+      
+      // Update user data
+      const allUsers = JSON.parse(localStorage.getItem('manomitraUsers')) || [];
+      const userIndex = allUsers.findIndex(user => user.username === currentUser.username);
+      
+      if (userIndex !== -1) {
+        // Update existing user
+        allUsers[userIndex].username = newUsername;
+        allUsers[userIndex].email = newEmail;
+        
+        // Also update in session storage
+        sessionStorage.setItem('manomitraCurrentUser', newUsername);
+        
+        // Save back to localStorage
+        localStorage.setItem('manomitraUsers', JSON.stringify(allUsers));
+        
+        // Update current user reference
+        currentUser = allUsers[userIndex];
+        
+        // Update display
+        document.getElementById('profile-name').textContent = newUsername;
+        document.getElementById('profile-avatar').textContent = newUsername.charAt(0).toUpperCase();
+        
+        alert('Profile updated successfully');
+      } else {
+        alert('Error updating profile');
+      }
+    }
+    
+    // Navigate to update anchors page
+    function updateAnchors() {
+      if (currentUser) {
+        window.location.href = `update-anchors.html?username=${encodeURIComponent(currentUser.username)}`;
+      } else {
+        alert('Please log in again to update your anchors');
+      }
+    }
+    
+    // Export user data
+    function exportData() {
+      if (typeof window.excelExporter !== 'undefined') {
+        // Use Excel exporter if available
+        window.excelExporter.exportUserData(currentUser.username);
+      } else {
+        // Simple JSON export as fallback
+        const gameData = JSON.parse(localStorage.getItem('manomitraGameData')) || [];
+        const userData = gameData.filter(item => item.userId === currentUser.username);
+        
+        const exportData = {
+          user: currentUser,
+          gameData: userData
+        };
+        
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const exportFileDefaultName = `manomitra_${currentUser.username}_data.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+      }
+    }
+    
+    // Clear user activity data
+    function clearData() {
+      if (!currentUser) return;
+      
+      if (confirm('Are you sure you want to clear all your activity data? This cannot be undone.')) {
+        // Get all game data
+        const gameData = JSON.parse(localStorage.getItem('manomitraGameData')) || [];
+        
+        // Filter out data for current user
+        const filteredData = gameData.filter(item => item.userId !== currentUser.username);
+        
+        // Save back to localStorage
+        localStorage.setItem('manomitraGameData', JSON.stringify(filteredData));
+        
+        // Reset user stats
+        const allUserStats = JSON.parse(localStorage.getItem('manomitraUserStats')) || {};
+        if (allUserStats[currentUser.username]) {
+          delete allUserStats[currentUser.username];
+          localStorage.setItem('manomitraUserStats', JSON.stringify(allUserStats));
+        }
+        
+        // Reload data display
+        loadGameData();
+        
+        alert('Your activity data has been cleared');
+      }
+    }
+    
+    // Delete account with confirmation
+    function confirmDeleteAccount() {
+      if (!currentUser) return;
+      
+      if (confirm('Are you sure you want to delete your account? All data will be lost and this cannot be undone.')) {
+        // Delete user data
+        const allUsers = JSON.parse(localStorage.getItem('manomitraUsers')) || [];
+        const filteredUsers = allUsers.filter(user => user.username !== currentUser.username);
+        localStorage.setItem('manomitraUsers', JSON.stringify(filteredUsers));
+        
+        // Delete game data
+        const gameData = JSON.parse(localStorage.getItem('manomitraGameData')) || [];
+        const filteredData = gameData.filter(item => item.userId !== currentUser.username);
+        localStorage.setItem('manomitraGameData', JSON.stringify(filteredData));
+        
+        // Delete user stats
+        const allUserStats = JSON.parse(localStorage.getItem('manomitraUserStats')) || {};
+        if (allUserStats[currentUser.username]) {
+          delete allUserStats[currentUser.username];
+          localStorage.setItem('manomitraUserStats', JSON.stringify(allUserStats));
+        }
+        
+        // Clear session storage
+        sessionStorage.removeItem('manomitraCurrentUser');
+        
+        alert('Your account has been deleted. You will be redirected to the login page.');
+        window.location.href = 'login.html';
+      }
+    }
+    
+    // Toggle chatbot visibility
+    document.getElementById('chatbot-toggle').addEventListener('click', function() {
+      const container = document.getElementById('chatbot-container');
+      container.classList.toggle('active');
+    });
+    
+    // Logout function
+    function logout() {
+      // Clear session storage
+      sessionStorage.removeItem('manomitraCurrentUser');
+      
+      // Redirect to login page
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

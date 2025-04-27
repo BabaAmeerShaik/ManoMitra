@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games - ManoMitra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Main Cards and Hover */
+    .game-card {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      border-color: #10b981;
+    }
+    .game-preview {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* Memory Match */
+    .memory-card {
+      width: 100px;
+      height: 100px;
+      margin: 5px;
+      border-radius: 8px;
+      background-color: #a7f3d0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .memory-card.flipped {
+      background-color: white;
+      font-size: 2rem;
+      color: #047857;
+    }
+    .memory-card.matched {
+      background-color: #d1fae5;
+      cursor: default;
+    }
+
+    /* Chatbot */
+    .chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #10b981;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .chatbot-icon:hover {
+      transform: scale(1.1);
+    }
+    .chatbot-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 350px;
+      height: 450px;
+      background-color: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+    .chatbot-container.active {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+
+<body class="bg-green-50 min-h-screen">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex items-center">
+        <img src="manomitra.jpeg" alt="ManoMitra Logo" class="h-10 rounded-lg">
+        <span class="ml-3 text-2xl font-bold text-emerald-700">ManoMitra</span>
+      </div>
+      <div class="flex space-x-6">
+        <a href="dashboard.html" class="text-emerald-600 hover:text-emerald-900 font-medium">Home</a>
+        <a href="games.html" class="text-emerald-800 font-semibold hover:text-emerald-600">Games</a>
+        <a href="profile.html" class="text-emerald-600 hover:text-emerald-900 font-medium">Profile</a>
+        <button onclick="logout()" class="bg-red-100 text-red-600 hover:bg-red-200 font-medium px-4 py-1 rounded-lg">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" id="chatbot-toggle">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+  </svg>
+</div>
+
+<!-- Chatbot Container -->
+<div class="chatbot-container" id="chatbot-container">
+  <iframe src="chatbot.html" width="100%" height="100%" frameborder="0"></iframe>
+</div>
+
+<!-- Script for Chatbot -->
+<script>
+document.getElementById('chatbot-toggle').addEventListener('click', function() {
+  document.getElementById('chatbot-container').classList.toggle('active');
+});
+function logout() {
+  window.location.href = 'login.html';
+}
+</script>
+
+<!-- Main Game Area -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div id="games-selection">
+    <h1 class="text-3xl font-bold text-emerald-800 mb-6">Cognitive Games & Exercises</h1>
+    <p class="text-emerald-600 mb-8">Choose an activity to boost your mental fitness:</p>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Memory Match Game -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('memory-match')">
+        <div class="game-preview" style="background-image: url('images/game-memory.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Memory Match</h3>
+          <p class="text-sm text-gray-600 mt-1">Improve short-term and working memory</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Moderate</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">2-3 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sequence Recall Game -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('sequence-recall')">
+        <div class="game-preview" style="background-image: url('images/game-sequence.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Sequence Recall</h3>
+          <p class="text-sm text-gray-600 mt-1">Improve sequential memory and attention span</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Challenging</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">3-5 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reaction Time Game -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('reaction-time')">
+        <div class="game-preview" style="background-image: url('images/game-reaction.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Reaction Time</h3>
+          <p class="text-sm text-gray-600 mt-1">Test and train fast decision-making and reflexes</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Easy</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">1-2 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Math Challenge Game -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('math-game')">
+        <div class="game-preview" style="background-image: url('images/game-math.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Math Challenge</h3>
+          <p class="text-sm text-gray-600 mt-1">Solve math problems quickly to boost brain sharpness</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Moderate</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">2-3 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Word Association Game -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('word-association')">
+        <div class="game-preview" style="background-image: url('images/game-words.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Word Association</h3>
+          <p class="text-sm text-gray-600 mt-1">Improve verbal memory and quick thinking</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Easy</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">2-4 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pattern Recognition Game -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('pattern-recognition')">
+        <div class="game-preview" style="background-image: url('images/game-pattern.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Pattern Recognition</h3>
+          <p class="text-sm text-gray-600 mt-1">Strengthen logical thinking and visual memory</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Moderate</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">3-5 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breathing Exercise -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('breathing-exercise')">
+        <div class="game-preview" style="background-image: url('images/game-breathing.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Mindfulness Breathing</h3>
+          <p class="text-sm text-gray-600 mt-1">Reduce stress and improve mindfulness</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Easy</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">5 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Find the Difference -->
+      <div class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="startGame('find-difference')">
+        <div class="game-preview" style="background-image: url('images/game-difference.jpg');"></div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-emerald-800">Find the Differences</h3>
+          <p class="text-sm text-gray-600 mt-1">Sharpen observation skills and attention</p>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-xs text-emerald-600">Level: Moderate</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">3-5 min</span>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- end grid -->
+  </div> <!-- end games-selection -->
+  <!-- MEMORY MATCH GAME -->
+  <div id="memory-match-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-emerald-800">Memory Match Game</h2>
+      <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+    </div>
+
+    <div class="mb-4">
+      <p class="text-emerald-700">Match pairs of symbols to test your visual memory.</p>
+      <div class="flex justify-between items-center mt-2">
+        <div><span class="font-medium">Time:</span> <span id="memory-time">0</span>s</div>
+        <div><span class="font-medium">Pairs Found:</span> <span id="memory-pairs">0</span> / <span id="memory-total">8</span></div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 mt-6" id="memory-board"></div>
+
+    <div class="mt-6 text-center">
+      <button onclick="startMemoryGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start New Game</button>
+    </div>
+  </div>
+
+<script>
+let memoryCards = [];
+let memoryFlipped = [];
+let memoryMatched = [];
+let memoryTimer = null;
+let memoryTime = 0;
+
+function startMemoryGame() {
+  memoryFlipped = [];
+  memoryMatched = [];
+  memoryTime = 0;
+  document.getElementById('memory-time').textContent = '0';
+  document.getElementById('memory-pairs').textContent = '0';
+
+  if (memoryTimer) clearInterval(memoryTimer);
+  memoryTimer = setInterval(() => {
+    memoryTime++;
+    document.getElementById('memory-time').textContent = memoryTime;
+  }, 1000);
+
+  const symbols = ['🍎', '🍌', '🍒', '🍇', '🍉', '🍋', '🍍', '🥑'];
+  memoryCards = [...symbols, ...symbols];
+  shuffleArray(memoryCards);
+
+  const board = document.getElementById('memory-board');
+  board.innerHTML = '';
+
+  memoryCards.forEach((symbol, index) => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.dataset.index = index;
+    card.dataset.symbol = symbol;
+    card.addEventListener('click', flipMemoryCard);
+    board.appendChild(card);
+  });
+
+  document.getElementById('memory-total').textContent = symbols.length;
+}
+
+function flipMemoryCard() {
+  const index = parseInt(this.dataset.index);
+  if (memoryFlipped.includes(index) || memoryMatched.includes(index)) return;
+
+  this.textContent = this.dataset.symbol;
+  this.classList.add('flipped');
+  memoryFlipped.push(index);
+
+  if (memoryFlipped.length === 2) {
+    const card1 = document.querySelector(`.memory-card[data-index="${memoryFlipped[0]}"]`);
+    const card2 = document.querySelector(`.memory-card[data-index="${memoryFlipped[1]}"]`);
+
+    if (card1.dataset.symbol === card2.dataset.symbol) {
+      setTimeout(() => {
+        card1.classList.add('matched');
+        card2.classList.add('matched');
+        memoryMatched.push(...memoryFlipped);
+        memoryFlipped = [];
+
+        document.getElementById('memory-pairs').textContent = memoryMatched.length / 2;
+
+        if (memoryMatched.length === memoryCards.length) {
+          clearInterval(memoryTimer);
+          saveGameResult('memory-match', 100 - memoryTime);
+          setTimeout(() => {
+            alert(`🎉 Great job! You finished Memory Match in ${memoryTime} seconds!`);
+            exitGame();
+          }, 500);
+        }
+      }, 300);
+    } else {
+      setTimeout(() => {
+        card1.textContent = '';
+        card2.textContent = '';
+        card1.classList.remove('flipped');
+        card2.classList.remove('flipped');
+        memoryFlipped = [];
+      }, 700);
+    }
+  }
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+</script>
+<!-- SEQUENCE RECALL GAME -->
+<div id="sequence-recall-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Sequence Recall Game</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-emerald-700">Watch the sequence of lights and repeat the same order.</p>
+    <div class="flex justify-between items-center mt-2">
+      <div><span class="font-medium">Level:</span> <span id="sequence-level">1</span></div>
+      <div><span class="font-medium">Status:</span> <span id="sequence-status">Ready</span></div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-4 mt-6" id="sequence-board">
+    <button class="sequence-btn bg-red-400" data-color="red"></button>
+    <button class="sequence-btn bg-blue-400" data-color="blue"></button>
+    <button class="sequence-btn bg-green-400" data-color="green"></button>
+    <button class="sequence-btn bg-yellow-300" data-color="yellow"></button>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button id="sequence-start-btn" onclick="startSequenceGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start Game</button>
+  </div>
+</div>
+
+<script>
+let sequence = [];
+let playerSequence = [];
+let sequenceLevel = 1;
+let isShowingSequence = false;
+
+function startSequenceGame() {
+  sequence = [];
+  playerSequence = [];
+  sequenceLevel = 1;
+  document.getElementById('sequence-level').textContent = sequenceLevel;
+  addToSequence();
+  showSequence();
+}
+
+function addToSequence() {
+  const colors = ['red', 'blue', 'green', 'yellow'];
+  sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+}
+
+function showSequence() {
+  isShowingSequence = true;
+  document.getElementById('sequence-status').textContent = 'Watch...';
+  const buttons = document.querySelectorAll('.sequence-btn');
+  buttons.forEach(btn => btn.disabled = true);
+
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i >= sequence.length) {
+      clearInterval(interval);
+      isShowingSequence = false;
+      document.getElementById('sequence-status').textContent = 'Your Turn!';
+      buttons.forEach(btn => {
+        btn.disabled = false;
+        btn.addEventListener('click', checkSequence);
+      });
+      return;
+    }
+    const color = sequence[i];
+    const button = document.querySelector(`.sequence-btn[data-color="${color}"]`);
+    button.classList.add('ring-4', 'ring-white');
+    setTimeout(() => {
+      button.classList.remove('ring-4', 'ring-white');
+    }, 400);
+    i++;
+  }, 800);
+}
+
+function checkSequence() {
+  if (isShowingSequence) return;
+  const color = this.dataset.color;
+  playerSequence.push(color);
+
+  const index = playerSequence.length - 1;
+  if (playerSequence[index] !== sequence[index]) {
+    document.getElementById('sequence-status').textContent = 'Wrong! Game Over.';
+    saveGameResult('sequence-recall', sequenceLevel - 1);
+    return;
+  }
+
+  if (playerSequence.length === sequence.length) {
+    document.getElementById('sequence-status').textContent = 'Correct!';
+    const buttons = document.querySelectorAll('.sequence-btn');
+    buttons.forEach(btn => btn.removeEventListener('click', checkSequence));
+    setTimeout(() => {
+      sequenceLevel++;
+      document.getElementById('sequence-level').textContent = sequenceLevel;
+      playerSequence = [];
+      addToSequence();
+      showSequence();
+    }, 1000);
+  }
+}
+</script>
+
+<!-- REACTION TIME GAME -->
+<div id="reaction-time-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Reaction Time Test</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-emerald-700">Click as fast as you can when the color turns GREEN!</p>
+    <div class="flex justify-between items-center mt-2">
+      <div><span class="font-medium">Last Time:</span> <span id="reaction-last">0</span>ms</div>
+      <div><span class="font-medium">Best Time:</span> <span id="reaction-best">0</span>ms</div>
+    </div>
+  </div>
+
+  <div class="flex justify-center mt-8">
+    <div id="reaction-target" class="reaction-target bg-red-400 w-36 h-36 rounded-full flex items-center justify-center text-white font-bold cursor-pointer">
+      Wait...
+    </div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button onclick="startReactionGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start Test</button>
+  </div>
+</div>
+
+<script>
+let reactionStartTime;
+let reactionTimerId;
+let waitingForClick = false;
+let bestReactionTime = Infinity;
+
+function startReactionGame() {
+  const target = document.getElementById('reaction-target');
+  target.classList.remove('bg-green-500');
+  target.classList.add('bg-red-400');
+  target.textContent = 'Wait...';
+
+  target.removeEventListener('click', handleReactionClick);
+
+  const delay = Math.random() * 4000 + 2000;
+
+  reactionTimerId = setTimeout(() => {
+    reactionStartTime = Date.now();
+    target.classList.remove('bg-red-400');
+    target.classList.add('bg-green-500');
+    target.textContent = 'CLICK NOW!';
+    waitingForClick = true;
+    target.addEventListener('click', handleReactionClick);
+  }, delay);
+}
+
+function handleReactionClick() {
+  if (!waitingForClick) {
+    clearTimeout(reactionTimerId);
+    document.getElementById('reaction-target').textContent = 'Too early! Try again.';
+    return;
+  }
+
+  waitingForClick = false;
+  const endTime = Date.now();
+  const reactionTime = endTime - reactionStartTime;
+
+  document.getElementById('reaction-last').textContent = reactionTime;
+
+  if (reactionTime < bestReactionTime) {
+    bestReactionTime = reactionTime;
+    document.getElementById('reaction-best').textContent = bestReactionTime;
+  }
+
+  document.getElementById('reaction-target').classList.remove('bg-green-500');
+  document.getElementById('reaction-target').classList.add('bg-red-400');
+  document.getElementById('reaction-target').textContent = `${reactionTime}ms - Try Again!`;
+
+  saveGameResult('reaction-time', reactionTime);
+}
+</script>
+
+<!-- MATH CHALLENGE GAME -->
+<div id="math-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Math Challenge</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-emerald-700">Solve as many math problems as you can in 60 seconds!</p>
+    <div class="flex justify-between items-center mt-2">
+      <div><span class="font-medium">Score:</span> <span id="math-score">0</span></div>
+      <div><span class="font-medium">Time Left:</span> <span id="math-time">60</span>s</div>
+    </div>
+  </div>
+
+  <div class="text-center mt-8">
+    <div class="text-3xl font-bold my-4" id="math-problem">8 + 5 = ?</div>
+    <div class="flex flex-wrap justify-center gap-4" id="math-options"></div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button onclick="startMathGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start New Game</button>
+  </div>
+</div>
+
+<script>
+let mathScore = 0;
+let mathTimeLeft = 60;
+let mathTimerId;
+
+function startMathGame() {
+  mathScore = 0;
+  mathTimeLeft = 60;
+  document.getElementById('math-score').textContent = mathScore;
+  document.getElementById('math-time').textContent = mathTimeLeft;
+
+  if (mathTimerId) clearInterval(mathTimerId);
+
+  mathTimerId = setInterval(() => {
+    mathTimeLeft--;
+    document.getElementById('math-time').textContent = mathTimeLeft;
+    if (mathTimeLeft <= 0) {
+      clearInterval(mathTimerId);
+      saveGameResult('math-game', mathScore);
+      alert(`⏳ Time's up! Your score: ${mathScore}`);
+      exitGame();
+    }
+  }, 1000);
+
+  generateMathProblem();
+}
+
+function generateMathProblem() {
+  const num1 = Math.floor(Math.random() * 20) + 1;
+  const num2 = Math.floor(Math.random() * 20) + 1;
+  const operations = ['+', '-', '*'];
+  const operation = operations[Math.floor(Math.random() * operations.length)];
+
+  let correctAnswer;
+  if (operation === '+') correctAnswer = num1 + num2;
+  else if (operation === '-') correctAnswer = num1 - num2;
+  else correctAnswer = num1 * num2;
+
+  document.getElementById('math-problem').textContent = `${num1} ${operation} ${num2} = ?`;
+
+  const options = [correctAnswer];
+  while (options.length < 4) {
+    const wrong = correctAnswer + Math.floor(Math.random() * 10) - 5;
+    if (wrong !== correctAnswer && !options.includes(wrong) && wrong >= 0) {
+      options.push(wrong);
+    }
+  }
+  shuffleArray(options);
+
+  const optionsContainer = document.getElementById('math-options');
+  optionsContainer.innerHTML = '';
+  options.forEach(option => {
+    const button = document.createElement('button');
+    button.className = 'math-option bg-emerald-100 hover:bg-emerald-200 px-4 py-2 rounded-lg';
+    button.textContent = option;
+    button.addEventListener('click', () => checkMathAnswer(option, correctAnswer));
+    optionsContainer.appendChild(button);
+  });
+}
+
+function checkMathAnswer(selected, correct) {
+  if (selected === correct) {
+    mathScore++;
+    document.getElementById('math-score').textContent = mathScore;
+    generateMathProblem();
+  } else {
+    generateMathProblem();
+  }
+}
+</script>
+
+<!-- WORD ASSOCIATION GAME -->
+<div id="word-association-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Word Association</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-emerald-700">Choose the word most associated with the given word.</p>
+    <div class="flex justify-between items-center mt-2">
+      <div><span class="font-medium">Score:</span> <span id="word-score">0</span></div>
+      <div><span class="font-medium">Time Left:</span> <span id="word-time">60</span>s</div>
+    </div>
+  </div>
+
+  <div class="text-center mt-8">
+    <div class="text-3xl font-bold mb-6" id="word-target">Ocean</div>
+    <div class="grid grid-cols-2 gap-4" id="word-options"></div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button onclick="startWordGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start New Game</button>
+  </div>
+</div>
+
+<script>
+let wordScore = 0;
+let wordTimeLeft = 60;
+let wordTimerId;
+
+const wordAssociations = {
+  'Ocean': { correct: ['Wave'], wrong: ['Mountain', 'Desert', 'Forest'] },
+  'Sun': { correct: ['Light'], wrong: ['Dark', 'Cold', 'Snow'] },
+  'Book': { correct: ['Page'], wrong: ['River', 'Mountain', 'Tree'] },
+  'Tree': { correct: ['Leaf'], wrong: ['Fire', 'Road', 'Car'] }
+};
+
+function startWordGame() {
+  wordScore = 0;
+  wordTimeLeft = 60;
+  document.getElementById('word-score').textContent = wordScore;
+  document.getElementById('word-time').textContent = wordTimeLeft;
+
+  if (wordTimerId) clearInterval(wordTimerId);
+
+  wordTimerId = setInterval(() => {
+    wordTimeLeft--;
+    document.getElementById('word-time').textContent = wordTimeLeft;
+    if (wordTimeLeft <= 0) {
+      clearInterval(wordTimerId);
+      saveGameResult('word-association', wordScore);
+      alert(`⏳ Time's up! Your score: ${wordScore}`);
+      exitGame();
+    }
+  }, 1000);
+
+  generateWord();
+}
+
+function generateWord() {
+  const words = Object.keys(wordAssociations);
+  const word = words[Math.floor(Math.random() * words.length)];
+  document.getElementById('word-target').textContent = word;
+
+  const correct = wordAssociations[word].correct[0];
+  const wrongs = wordAssociations[word].wrong;
+  const options = [correct, ...wrongs];
+  shuffleArray(options);
+
+  const container = document.getElementById('word-options');
+  container.innerHTML = '';
+  options.forEach(option => {
+    const btn = document.createElement('button');
+    btn.className = 'bg-emerald-100 hover:bg-emerald-200 p-3 rounded-lg font-medium';
+    btn.textContent = option;
+    btn.addEventListener('click', () => checkWord(option, correct));
+    container.appendChild(btn);
+  });
+}
+
+function checkWord(selected, correct) {
+  if (selected === correct) {
+    wordScore++;
+    document.getElementById('word-score').textContent = wordScore;
+  }
+  generateWord();
+}
+</script>
+<!-- PATTERN RECOGNITION GAME -->
+<div id="pattern-recognition-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Pattern Recognition</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-emerald-700">Memorize the pattern and recreate it!</p>
+    <div class="flex justify-between items-center mt-2">
+      <div><span class="font-medium">Level:</span> <span id="pattern-level">1</span></div>
+      <div><span class="font-medium">Status:</span> <span id="pattern-status">Memorize</span></div>
+    </div>
+  </div>
+
+  <div class="flex justify-center mt-6">
+    <div class="grid grid-cols-4 gap-2" id="pattern-board"></div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button id="pattern-button" onclick="startPatternGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start Game</button>
+  </div>
+</div>
+
+<script>
+let patternLevel = 1;
+let patternSequence = [];
+let playerPattern = [];
+let patternCells = [];
+
+function startPatternGame() {
+  patternLevel = 1;
+  patternSequence = [];
+  playerPattern = [];
+  createPatternBoard();
+  generatePattern();
+}
+
+function createPatternBoard() {
+  const board = document.getElementById('pattern-board');
+  board.innerHTML = '';
+  patternCells = [];
+  for (let i = 0; i < 16; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'w-16 h-16 border border-emerald-400 rounded bg-white cursor-pointer';
+    cell.dataset.index = i;
+    cell.addEventListener('click', () => selectCell(i));
+    board.appendChild(cell);
+    patternCells.push(cell);
+  }
+}
+
+function generatePattern() {
+  const newCell = Math.floor(Math.random() * 16);
+  patternSequence.push(newCell);
+  showPattern();
+}
+
+function showPattern() {
+  document.getElementById('pattern-status').textContent = 'Memorize';
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i >= patternSequence.length) {
+      clearInterval(interval);
+      document.getElementById('pattern-status').textContent = 'Your Turn!';
+      return;
+    }
+    const idx = patternSequence[i];
+    patternCells[idx].classList.add('bg-emerald-200');
+    setTimeout(() => {
+      patternCells[idx].classList.remove('bg-emerald-200');
+    }, 400);
+    i++;
+  }, 800);
+}
+
+function selectCell(index) {
+  if (document.getElementById('pattern-status').textContent !== 'Your Turn!') return;
+  playerPattern.push(index);
+  patternCells[index].classList.add('bg-emerald-400');
+  setTimeout(() => {
+    patternCells[index].classList.remove('bg-emerald-400');
+  }, 300);
+
+  const current = playerPattern.length - 1;
+  if (patternSequence[current] !== playerPattern[current]) {
+    document.getElementById('pattern-status').textContent = 'Wrong! Game Over.';
+    saveGameResult('pattern-recognition', patternLevel - 1);
+    return;
+  }
+  if (playerPattern.length === patternSequence.length) {
+    patternLevel++;
+    document.getElementById('pattern-level').textContent = patternLevel;
+    playerPattern = [];
+    generatePattern();
+  }
+}
+</script>
+
+<!-- MINDFULNESS BREATHING -->
+<div id="breathing-exercise" class="hidden bg-white p-6 rounded-xl shadow-lg text-center">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Mindfulness Breathing</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit</button>
+  </div>
+
+  <p class="text-emerald-700 mb-6">Follow the breathing guide below.</p>
+
+  <div id="breathing-circle" class="breathing-circle bg-emerald-200 rounded-full w-48 h-48 mx-auto mb-8 flex justify-center items-center text-2xl font-bold text-emerald-800">
+    Ready
+  </div>
+
+  <button onclick="startBreathingExercise()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start Exercise</button>
+</div>
+
+<script>
+let breathingState = 'inhale';
+let breathingCount = 0;
+let breathingInterval;
+
+function startBreathingExercise() {
+  const circle = document.getElementById('breathing-circle');
+  breathingCount = 0;
+  breathingState = 'inhale';
+  animateBreathing(circle);
+
+  if (breathingInterval) clearInterval(breathingInterval);
+  breathingInterval = setInterval(() => {
+    animateBreathing(circle);
+    breathingCount++;
+    if (breathingCount >= 10) {
+      clearInterval(breathingInterval);
+      circle.textContent = 'Done!';
+      saveGameResult('breathing-exercise', 10);
+    }
+  }, 4000);
+}
+
+function animateBreathing(circle) {
+  if (breathingState === 'inhale') {
+    circle.style.transform = 'scale(1.5)';
+    circle.textContent = 'Inhale';
+    breathingState = 'exhale';
+  } else {
+    circle.style.transform = 'scale(1)';
+    circle.textContent = 'Exhale';
+    breathingState = 'inhale';
+  }
+}
+</script>
+
+<!-- FIND THE DIFFERENCE GAME -->
+<div id="find-difference-game" class="hidden bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-emerald-800">Find the Differences</h2>
+    <button onclick="exitGame()" class="bg-red-100 text-red-500 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium">Exit Game</button>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-emerald-700">Find all hidden differences between the two images!</p>
+    <div class="flex justify-between items-center mt-2">
+      <div><span class="font-medium">Found:</span> <span id="difference-found">0</span> / <span id="difference-total">5</span></div>
+      <div><span class="font-medium">Time:</span> <span id="difference-time">0</span>s</div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-4 mt-6">
+    <div class="difference-image bg-emerald-100 w-72 h-48 relative" id="image-1"></div>
+    <div class="difference-image bg-emerald-100 w-72 h-48 relative" id="image-2"></div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button onclick="startDifferenceGame()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg">Start New Game</button>
+  </div>
+</div>
+
+<script>
+let differencesFound = 0;
+let differenceTime = 0;
+let differenceTimer;
+
+function startDifferenceGame() {
+  differencesFound = 0;
+  differenceTime = 0;
+  document.getElementById('difference-found').textContent = 0;
+  document.getElementById('difference-time').textContent = 0;
+
+  if (differenceTimer) clearInterval(differenceTimer);
+  differenceTimer = setInterval(() => {
+    differenceTime++;
+    document.getElementById('difference-time').textContent = differenceTime;
+  }, 1000);
+
+  createDifferenceSpots();
+}
+
+function createDifferenceSpots() {
+  const image2 = document.getElementById('image-2');
+  image2.innerHTML = '';
+
+  for (let i = 0; i < 5; i++) {
+    const spot = document.createElement('div');
+    spot.className = 'absolute w-8 h-8 rounded-full border-2 border-transparent cursor-pointer';
+    spot.style.top = `${Math.random() * 160 + 10}px`;
+    spot.style.left = `${Math.random() * 260 + 10}px`;
+
+    spot.addEventListener('click', () => {
+      if (!spot.classList.contains('found')) {
+        spot.classList.add('found');
+        spot.style.borderColor = '#10b981';
+        spot.style.backgroundColor = 'rgba(16,185,129,0.2)';
+        differencesFound++;
+        document.getElementById('difference-found').textContent = differencesFound;
+        if (differencesFound === 5) {
+          clearInterval(differenceTimer);
+          saveGameResult('find-difference', 100 - differenceTime);
+          setTimeout(() => {
+            alert(`🎉 You found all differences in ${differenceTime} seconds!`);
+            exitGame();
+          }, 500);
+        }
+      }
+    });
+
+    image2.appendChild(spot);
+  }
+}
+</script>
+<!-- COMMON GAME CONTROL SCRIPTS -->
+<script>
+// Exit Game and go back to main menu
+function exitGame() {
+  const games = document.querySelectorAll('[id$="-game"]');
+  games.forEach(game => game.classList.add('hidden'));
+  document.getElementById('games-selection').classList.remove('hidden');
+}
+
+// Start selected game
+function startGame(gameId) {
+  const games = document.querySelectorAll('[id$="-game"]');
+  games.forEach(game => game.classList.add('hidden'));
+  document.getElementById('games-selection').classList.add('hidden');
+  document.getElementById(gameId + '-game').classList.remove('hidden');
+
+  switch (gameId) {
+    case 'memory-match':
+      startMemoryGame();
+      break;
+    case 'sequence-recall':
+      startSequenceGame();
+      break;
+    case 'reaction-time':
+      startReactionGame();
+      break;
+    case 'math-game':
+      startMathGame();
+      break;
+    case 'word-association':
+      startWordGame();
+      break;
+    case 'pattern-recognition':
+      startPatternGame();
+      break;
+    case 'breathing-exercise':
+      startBreathingExercise();
+      break;
+    case 'find-difference':
+      startDifferenceGame();
+      break;
+  }
+}
+
+// Save Game Result (to localStorage)
+function saveGameResult(gameId, score) {
+  const existing = JSON.parse(localStorage.getItem('manomitraGameData')) || [];
+  existing.push({
+    gameId: gameId,
+    score: score,
+    date: new Date().toISOString()
+  });
+  localStorage.setItem('manomitraGameData', JSON.stringify(existing));
+}
+
+// Shuffle Array Utility
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+</script>
+
+</div> <!-- Close main wrapper -->
+</body>
+</html>

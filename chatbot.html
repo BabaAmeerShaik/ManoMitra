@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ManoMitra Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px 15px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .user-bubble {
+      background-color: #a7f3d0;
+      align-self: flex-end;
+    }
+    .bot-bubble {
+      background-color: #d1fae5;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+<body class="bg-green-50 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white shadow-2xl rounded-xl w-full max-w-2xl p-6 flex flex-col h-[90vh]">
+    <div class="text-center mb-4">
+      <img src="manomitra.jpeg" alt="ManoMitra Logo" class="h-14 mx-auto rounded-lg">
+      <h2 class="text-2xl font-bold text-emerald-700">ManoMitra Chatbot</h2>
+      <p class="text-emerald-600">Let’s talk and support your journey to a better mind.</p>
+    </div>
+
+    <div id="chat-window" class="flex-1 overflow-y-auto mb-4 p-2 bg-emerald-50 rounded-lg flex flex-col"></div>
+
+    <form id="chat-form" class="flex gap-2">
+      <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 px-4 py-2 border border-emerald-300 rounded-xl focus:outline-none">
+      <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const chatWindow = document.getElementById("chat-window");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+
+    function addMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `chat-bubble ${sender === "user" ? "user-bubble self-end" : "bot-bubble self-start"}`;
+      msg.textContent = text;
+      chatWindow.appendChild(msg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function getBotResponse(message) {
+      const msg = message.toLowerCase();
+      if (msg.includes("hi") || msg.includes("hello")) {
+        return "Hi there! Ready for today’s training?";
+      } else if (msg.includes("tired")) {
+        return "That’s okay. Let’s take a short mental break.";
+      } else if (msg.includes("motivate")) {
+        return "You’re doing great! One step at a time.";
+      } else {
+        return "Tell me how you're feeling today. I'm listening.";
+      }
+    }
+
+    chatForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+      addMessage(message, "user");
+      const response = getBotResponse(message);
+      setTimeout(() => addMessage(response, "bot"), 600);
+      chatInput.value = "";
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ManoMitra Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-2xl">
+    <h2 class="text-2xl font-bold text-emerald-800 mb-4">👋 Hey! I'm your ManoMitra Chatbot</h2>
+
+    <div id="chatbox" class="bg-gray-100 p-4 h-96 overflow-y-auto rounded-lg mb-4 text-sm text-gray-800">
+      <div><strong>Bot:</strong> Hello! How are you feeling today?</div>
+    </div>
+
+    <form onsubmit="handleUserInput(event)" class="flex gap-2">
+      <input type="text" id="userInput" placeholder="Type your message..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+      <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const chatbox = document.getElementById('chatbox');
+
+    function handleUserInput(event) {
+      event.preventDefault();
+      const inputField = document.getElementById('userInput');
+      const message = inputField.value.trim();
+      if (!message) return;
+
+      appendMessage('You', message);
+      inputField.value = '';
+
+      // Simple rule-based replies
+      let reply = "Hmm, tell me more.";
+      const lower = message.toLowerCase();
+
+      if (lower.includes("hello") || lower.includes("hi")) {
+        reply = "Hi there! How’s your day going?";
+      } else if (lower.includes("sad")) {
+        reply = "I'm here for you. Would you like a calming exercise?";
+      } else if (lower.includes("happy")) {
+        reply = "That’s wonderful! Want to log a good moment?";
+      } else if (lower.includes("focus")) {
+        reply = "Would you like to try a focus activity?";
+      } else if (lower.includes("bye")) {
+        reply = "Goodbye! Take care of yourself 💚";
+      }
+
+      setTimeout(() => appendMessage('Bot', reply), 600);
+    }
+
+    function appendMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
+-->
+
+
